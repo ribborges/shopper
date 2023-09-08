@@ -1,0 +1,28 @@
+@import "../../style/abstract/var.scss";
+
+.btn {
+    color: $secondary-dark-color;
+    background-color: $primary-accent-color;
+
+    font-weight: bold;
+
+    flex: 1;
+    padding: 15px;
+    border-radius: $border-radius;
+
+    transition: 0.5s;
+
+    &:disabled {
+        filter: brightness(0.4);
+
+        &:hover {
+            color: $secondary-dark-color;
+            background-color: $primary-accent-color;
+        }
+    }
+
+    &:hover {
+        color: $secondary-light-color;
+        background-color: $secondary-accent-color;
+    }
+}

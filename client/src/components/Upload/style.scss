@@ -1,0 +1,62 @@
+@import "../../style/abstract/var.scss";
+
+.file-upload {
+    border-width: 5px;
+    border-style: dotted;
+    border-color: rgba($secondary-dark-color, 0.2);
+    border-radius: $border-radius;
+
+    padding: 10px;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.5s;
+
+    .file-upload-label {
+        color: rgba($primary-accent-color, 0.4);
+
+        font-size: 5rem;
+        text-align: center;
+
+        transition: 0.5s;
+
+        p {
+            font-size: 1rem;
+        }
+    }
+
+    input[type="file"] {
+        opacity: 0;
+
+        width: 100%;
+        height: 100%;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        cursor: pointer;
+    }
+
+    &:hover, &.dragover {
+        background-color: rgba($secondary-accent-color, 0.2);
+        border-color: rgba($secondary-dark-color, 0.6);
+
+        .file-upload-label {
+            color: rgba($primary-accent-color, 0.8);
+        }
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .file-upload {
+        border-color: rgba($secondary-light-color, 0.2);
+
+        &:hover, &.dragover {
+            border-color: rgba($secondary-light-color, 0.6);
+        }
+    }
+}

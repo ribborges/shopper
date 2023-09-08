@@ -1,0 +1,34 @@
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+
+    &.column {
+        flex-direction: column;
+    }
+
+    &.column-reverse {
+        flex-direction: column-reverse;
+    }
+
+    &.row {
+        flex-direction: row;
+    }
+
+    &.row-reverse {
+        flex-direction: row-reverse;
+    }
+}
+
+@media (max-width: 800px) {
+    .flex-container {
+        flex-direction: column;
+        
+        &.row {
+            flex-direction: column;
+        }
+    
+        &.row-reverse {
+            flex-direction: column-reverse;
+        }
+    }
+}

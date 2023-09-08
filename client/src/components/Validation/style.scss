@@ -1,0 +1,13 @@
+@import "../../style/abstract/var.scss";
+
+.validation {
+    padding: 10px;
+
+    &.true {
+        color: #c52727;
+    }
+
+    &.false {
+        color: $primary-accent-color;
+    }
+}

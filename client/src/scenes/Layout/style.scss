@@ -1,0 +1,24 @@
+@import "../../style/abstract/var.scss";
+
+.layout {
+    background-color: $secondary-light-color;
+    box-shadow: 0 0 50px rgba($primary-dark-color, 0.2);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 95%;
+    max-height: 500px;
+    width: 95%;
+    max-width: 800px;
+    padding: 15px;
+    border-radius: $border-radius;
+}
+
+@media (prefers-color-scheme: dark) {
+    .layout {
+        background-color: $secondary-dark-color;
+        box-shadow: 0 0 50px rgba($primary-light-color, 0.1);
+    }
+}

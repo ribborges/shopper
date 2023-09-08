@@ -1,5 +1,5 @@
 {
-  "name": "updater-server",
+  "name": "shopper-server",
   "version": "1.0.0",
   "description": "Teste técnico Shopper - Ferramenta para atualização massiva de produtos",
   "main": "index.js",

@@ -5,6 +5,7 @@ import { Dialect, Sequelize } from 'sequelize';
 import mysql2 from "mysql2";
 
 import productRoutes from "./routes/product";
+import packRoutes from "./routes/pack";
 
 import { connection, PORT } from "./config";
 
@@ -17,6 +18,7 @@ app.use(cors());
 
 /* --- Routes --- */
 app.use("/product", productRoutes);
+app.use("/pack", packRoutes);
 
 connection.authenticate().then(() => {
     console.log("Success");
