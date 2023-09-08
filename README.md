@@ -35,3 +35,5 @@ E depois
 ```bash
 > npm start
 ```
+
+Agora é só abrir o navegador no [http://localhost:5173/](http://localhost:5173/)
