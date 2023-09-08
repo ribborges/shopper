@@ -6,11 +6,13 @@ Baixe e instale o mysql e restaure a base de dados
 
 Crie um arquivo .env dentro da pastar server com os seguintes dados:
 
+```text
 SERVER=localhost
 PORT=5001
 USER={Usuário do mysql}
 PASSWORD={Senha do usuário mysql}
 DATABASE=eposshopperdatabase
+```
 
 Abra o terminal/cmd na pasta do server e execute
 
