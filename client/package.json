@@ -1,7 +1,9 @@
 {
   "name": "shopper",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Teste técnico Shopper - Ferramenta para atualização massiva de produtos",
+  "author": "Richard de Carvalho Borges",
   "type": "module",
   "scripts": {
     "start": "vite",

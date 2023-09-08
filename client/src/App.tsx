@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ParseResult, parse } from "papaparse";
 
-import { getProducts, updateProducts } from "./state/routes";
+import { updateProducts, validateProducts } from "./state/routes";
 
 import Layout from "./scenes/Layout";
 import Button from "./components/Button";
@@ -11,8 +11,10 @@ import Validation from "./components/Validation";
 
 export default function App() {
   const [file, setFile] = useState<File>();
-
   const [validation, setValidation] = useState<{ error: boolean, message: string }>();
+  const [updateBtn, setUpdateBtn] = useState(true);
+  const [data, setData] = useState<productUpdate[]>([]);
+  const [updatedData, setUpdatedData] = useState<product[]>([]);
 
   const validate = () => {
     if (file) {
@@ -25,14 +27,18 @@ export default function App() {
               new_price: data.new_price as number
             }
           });
-          console.log(parsed);
-
-          const fetch = await updateProducts(parsed);
+          setData(parsed);
+          const fetch = await validateProducts(data);
+          console.log(data);
 
           setValidation({
-            error: false,
-            message: fetch.data
+            error: fetch.data.error,
+            message: fetch.data.message
           });
+
+          if (!fetch.data.error) {
+            setUpdateBtn(false);
+          }
         }
       });
     } else {
@@ -43,23 +49,61 @@ export default function App() {
     }
   }
 
-  const teste = async () => {
-    const fetch = (await getProducts()).data;
+  const update = async () => {
+    const fetch = await updateProducts(data);
 
     setValidation({
-      error: true,
-      message: JSON.stringify(fetch)
+      error: fetch.data.error,
+      message: fetch.data.message
     });
-  }
+
+    console.log(fetch.data);
+
+    setUpdatedData(fetch.data.data);
+    
+    setFile(undefined);
+    setUpdateBtn(true);
+  };
 
   return (
     <>
       <Layout>
-        <Upload onFileChange={(file: File) => setFile(file)} accept=".csv" />
-        <Validation message={validation?.message} error={validation?.error} />
+        <Upload onFileChange={(file: File) => {
+          setUpdateBtn(true);
+          setFile(file);
+        }} accept=".csv" />
+        <Validation message={validation?.message} error={validation?.error}>
+          {
+            updatedData.length > 0 &&
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Preço de custo</th>
+                  <th>Preço de venda</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  updatedData?.map((value: product, index: number) => {
+                    return (
+                      <tr key={index}>
+                        <td>{value.code}</td>
+                        <td>{value.name}</td>
+                        <td>{value.cost_price}</td>
+                        <td>{value.sales_price}</td>
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+          }
+        </Validation>
         <FlexContainer gap="10px">
           <Button onClick={validate}>Validar</Button>
-          <Button disabled={true}>Atualizar</Button>
+          <Button onClick={update} disabled={updateBtn}>Atualizar</Button>
         </FlexContainer>
       </Layout>
     </>

@@ -14,12 +14,10 @@ export default function Upload(props: uploadProps) {
 
     const onDragEnter = () => {
         uploadRef.current.classList.add("dragover");
-        console.log("AAAAAAAAAAAAAAAAAAAAAA");
     }
 
     const onDragLeave = () => {
         uploadRef.current.classList.remove("dragover");
-        console.log("BBBBBBBBBBBBBBBBBBBBBB");
     }
 
     const onDrop = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +33,7 @@ export default function Upload(props: uploadProps) {
         <div className="file-upload">
             <div ref={uploadRef} className="file-upload-label" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onDragLeave}>
                 {
-                    file == null ?
+                    file == null || file == undefined ?
                         <>
                             <CloudArrowUpFill />
                             <p>Arraste e solte o arquivo .csv ou clique para fazer o upload</p>

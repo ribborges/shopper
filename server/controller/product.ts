@@ -10,21 +10,18 @@ export const getProducts = async (req: Request, res: Response) => {
         res.status(200).json(products);
     } catch (error: any) {
         res.status(404).json({
-            error: "404",
+            error: false,
             message: error.message
         });
     }
 };
 
-export const updateProducts = async (req: Request, res: Response) => {
+export const validateProducts = async (req: Request, res: Response) => {
     const data = req.body.data as productUpdate[];
 
-    const error = (message: string) => {
-        console.log(message);
-        res.status(400).json({
-            error: "400",
-            message: message
-        });
+    let error = {
+        error: false,
+        message: "Arquivo validado"
     };
 
     const findProductUpdate = (cod: number) => {
@@ -42,13 +39,13 @@ export const updateProducts = async (req: Request, res: Response) => {
     };
 
     const marketingValidation = (price: number, newPrice: number) => {
-        const newPriceCalcG = Number(price) + (Number(price) / 10);
-        const newPriceCalcM = Number(price) - (Number(price) / 10);
+        const newPriceCalcG = Math.round((Number(price) + (Number(price) / 10)) * 1e2) / 1e2;
+        const newPriceCalcM = Math.round((Number(price) - (Number(price) / 10)) * 1e2) / 1e2;
 
         return newPrice <= newPriceCalcG || newPrice >= newPriceCalcM;
     };
 
-    const packValidation = async (item: productUpdate, pack: pack[]) => {
+    const packValidation = async (item: productUpdate, pack: Pack[]) => {
         let componentsPrice = 0;
 
         await pack.forEach(async (packItem: pack) => {
@@ -57,7 +54,7 @@ export const updateProducts = async (req: Request, res: Response) => {
             if (productPack) {
                 componentsPrice = Number(componentsPrice) + (findProductUpdate(packItem.product_id) * packItem.qty);
             } else {
-                error("Um dos componentes do pack " + item.product_code + " não foi encontrado");
+                return false;
             }
         });
 
@@ -77,33 +74,60 @@ export const updateProducts = async (req: Request, res: Response) => {
 
             if (product) {
                 if (!financialValidation(item.new_price, product.cost_price)) {
-                    error("Novo preço do produto código " + item.product_code + " é menor que o seu custo");
+                    error.error = true;
+                    error.message = "Novo preço do produto código " + item.product_code + " é menor que o seu custo";
                 } else if (!marketingValidation(product.sales_price, item.new_price)) {
-                    error("Novo preço do produto código " + item.product_code + " possui ajuste diferente de 10%");
+                    error.error = true;
+                    error.message = "Novo preço do produto código " + item.product_code + " possui ajuste diferente de 10%";
                 } else if (pack && pack.length > 0) {
                     if (!packValidation(item, pack)) {
-                        error("Novo preço do produto código " + item.product_code + " não atende ao requisito de ajuste de pacotes");
-                    } else {
-                        console.log("YAAAAAS!");
-
-                        res.status(200);
+                        error.error = true;
+                        error.message = "Novo preço do produto código " + item.product_code + " não atende ao requisito de ajuste de pacotes";
                     }
-                } else {
-                    await product.update({ sales_price: item.new_price });
-
-                    res.status(200);
                 }
             } else {
-                res.status(404).json({
-                    error: "404",
-                    message: "Produto código" + item.product_code + "não encontrado"
-                });
+                error.error = true;
+                error.message = "Produto código" + item.product_code + "não encontrado";
             }
         });
+
+        res.status(200).json(error);
     } else {
-        res.status(400).json({
-            error: "404",
+        res.status(200).json({
+            error: true,
             message: "Dados em formato incorreto"
         });
     }
 };
+
+export const updateProducts = async (req: Request, res: Response) => {
+    let data: product[] = [];
+
+    try {
+        for (const item of req.body.data) {
+            const product = await Product.findOne({ where: { code: item.product_code } });
+
+            if (product) {
+                await product.update({ sales_price: item.new_price });
+
+                data = [...data, {
+                    code: product.code,
+                    name: product.name,
+                    cost_price: product.cost_price,
+                    sales_price: item.new_price
+                }]
+            }
+        }
+
+        res.status(200).json({
+            error: false,
+            message: "Dados atualizados",
+            data: [...data]
+        });
+    } catch (error) {
+        res.status(404).json({
+            error: true,
+            message: "404"
+        });
+    }
+}

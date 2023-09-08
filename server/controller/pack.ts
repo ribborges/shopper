@@ -9,7 +9,7 @@ export const getPacks = async (req: Request, res: Response) => {
         res.status(200).json(packs);
     } catch (error: any) {
         res.status(404).json({
-            error: "404",
+            error: true,
             message: error.message
         });
     }
